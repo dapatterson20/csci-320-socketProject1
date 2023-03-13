@@ -46,9 +46,7 @@ def send_file(filename: str):
                     raise Exception('Bad server response - was not received')
         # send the hash value so server can verify that the file was
         # received correctly.
-        hashResponse, server_address=client_socket.recvfrom(BUFFER_SIZE)
-        if hashResponse==b'send hash':
-            client_socket.sendto(file_hash.digest(), server_address)
+        client_socket.sendto(file_hash.digest(), server_address)
         response3, server_address = client_socket.recvfrom(BUFFER_SIZE)
         if response3 == b'failed':
             raise Exception('Transfer failed!')
@@ -62,12 +60,10 @@ def send_file(filename: str):
 
 if __name__ == "__main__":
     # get filename from cmd line
-    '''
+
     if len(sys.argv) < 2:
         print(f'SYNOPSIS: {sys.argv[0]} <filename>')
         sys.exit(1)
     file_name = sys.argv[1]  # filename from cmdline argument
-    '''
-    #'ReadmeTxt/README.txt'   <----Enter this filepath! Above does not work!
-    send_file(input('Enter filepath: '))
+    send_file(file_name)
 

@@ -20,24 +20,17 @@ def upload_file(server_socket: socket, file_name: str, file_size: int):
     with open(file_name+'.temp', 'wb') as file:
         try:
             while True:
-                server_socket.setblocking(0)
-                ready = select.select([server_socket], [], [], 1)
-                if ready[0]:
-                    chunk, client_address = server_socket.recvfrom(BUFFER_SIZE)
-                else:
-                    server_socket.setblocking(1)
+                fileSize = os.path.getsize(file_name + '.temp')
+                if file_size == fileSize:
                     break
+                chunk, client_address = server_socket.recvfrom(BUFFER_SIZE)
                 file.write(chunk)
                 hsh.update(chunk)
+                print(file.write(chunk))
                 server_socket.sendto(b'received', client_address)
-                if len(chunk) < 1:
-                    print('k')
-                    break
         except KeyboardInterrupt as ki:
             print("Shutting down...")
     # get hash from client to verify
-    server_socket.setblocking(1)
-    server_socket.sendto(b'send hash', client_address)
     response2, client_address = server_socket.recvfrom(BUFFER_SIZE)
     if response2==hsh.digest():
         server_socket.sendto(b'success', client_address)
