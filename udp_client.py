@@ -4,7 +4,7 @@ import sys  # needed to get cmd line parameters
 import os.path as path  # needed to get size of file in bytes
 
 IP = '127.0.0.1'  # change to the IP address of the server
-PORT = 13000  # change to a desired port number
+PORT = 12000  # change to a desired port number
 BUFFER_SIZE = 10024  # change to a desired buffer size
 
 
@@ -24,7 +24,8 @@ def send_file(filename: str):
     # convert the file size to an 8-byte byte string using big endian
     size = file_size.to_bytes(8, byteorder='big')
     # create a SHA256 object to generate hash of file
-    file_hash=hashlib.sha256(filename.encode())
+    file_hash = hashlib.sha256()
+    #file_hash=hashlib.sha256(filename.encode())
     # create a UDP socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:

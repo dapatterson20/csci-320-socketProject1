@@ -5,7 +5,7 @@ import select
 
 
 IP = '127.0.0.1'  # change to the IP address of the server
-PORT = 13000  # change to a desired port number
+PORT = 12000  # change to a desired port number
 BUFFER_SIZE = 10024  # change to a desired buffer size
 
 
@@ -15,19 +15,21 @@ def get_file_info(data: bytes) -> (str, int):
 
 def upload_file(server_socket: socket, file_name: str, file_size: int):
     # create a SHA256 object to verify file hash
-    hsh=hashlib.sha256(file_name.encode())
+    #hsh=hashlib.sha256(file_name.encode())
+    hsh = hashlib.sha256()
     # create a new file to store the received data
     with open(file_name+'.temp', 'wb') as file:
+        fileSize=0
         try:
-            while True:
-                fileSize = os.path.getsize(file_name + '.temp')
-                if file_size == fileSize:
-                    break
+            while fileSize<=file_size:
                 chunk, client_address = server_socket.recvfrom(BUFFER_SIZE)
+                fileSize+=len(chunk)
                 file.write(chunk)
                 hsh.update(chunk)
-                print(file.write(chunk))
+                #print(file.write(chunk))
                 server_socket.sendto(b'received', client_address)
+                if file_size == fileSize:
+                    break
         except KeyboardInterrupt as ki:
             print("Shutting down...")
     # get hash from client to verify
